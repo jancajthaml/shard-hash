@@ -16,10 +16,10 @@ class ShardHashSpecs extends FlatSpec with Matchers {
     hash should === (referenceHasher(id, modulus))
   }
 
-  it should "be consistent in different ids" in {
+  it should "be consistent in different ids (10000 times)" in {
     val modulus: Int = 300
 
-    (0 to 1000).foreach { t => {
+    (0 to 10000).foreach { t => {
       val id: String = BSONObjectID.generate().stringify
       shardHash(id, modulus) should === (referenceHasher(id, modulus))
     } }

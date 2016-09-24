@@ -9,7 +9,7 @@ object ReferencePerformance extends Bench.OfflineReport {
   val id: String = "507f1f77bcf86cd799439011"
   val modulus: Int = 300
 
-  performance of "Bigint" in {
+  performance of "BigInt" in {
     using(times) config (
       exec.benchRuns -> 20,
       exec.independentSamples -> 1,

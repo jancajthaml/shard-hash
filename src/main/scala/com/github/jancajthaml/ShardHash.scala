@@ -3,48 +3,29 @@ package com.github.jancajthaml
 object shardHash extends ((String, Int) => String) {
 
   def apply(x: String, modulo: Int): String = {
-    //@info radix will always be 16 for hexadecimal, use as magic number
-    //save allocation
-    val radix: Int = 16
-    var result: Int = 0
+    var hash: Int = 0
+    val limit: Int = ((Int.MaxValue / 16) * 0.8).asInstanceOf[Int]
 
     x.getBytes.foreach { b => {
-      val codePoint = b.toInt
       //@info this should be part or private object x in scala here
       val digit: Int = com.github.jancajthaml.Latin.A(b.toChar)
 
-      //@info we can work in a lower radix kelner and then multiply the result
-      //in the end will save "mutliply times number of character" steps
-      result *= radix
+      hash *= 16
 
       if ((digit & 0x1F) == 9) {
-        //@info duplicate first part 
-        val value = codePoint + ((digit & 0x3E0) >> 5) & 0x1F
-        //@info change to mathematic operation instead of condition
-        if (value < radix) {
-          result += value
-        } else {
-          result -= 1
-        }
+        val codePoint = b.toInt + ((digit & 0x3E0) >> 5) & 0x1F
+        hash = if (codePoint < 16) hash + codePoint else hash - 1
       } else if ((digit & 0xC00) == 0x00000C00) {
-        //@info duplicate first part 
-        val value = (codePoint + ((digit & 0x3E0) >> 5) & 0x1F) + 10
-        //@info change to mathematic operation instead of condition
-        if (value < radix) {
-          result += value
-        } else {
-          result -= 1
-        }
+        val codePoint = b.toInt + ((digit & 0x3E0) >> 5) & 0x1F
+        hash = if (codePoint < 26) hash + codePoint + 10 else hash - 1
       }
 
-      if (result >= modulo) {
-        //@info this is really costly operation, should implement smarter
-        result %= modulo 
+      if (hash >= limit) {
+        hash %= modulo 
       }
-
     } }
 
-    result.toString
+    (if (hash >= modulo) (hash % modulo) else hash).toString
   }
 
 }

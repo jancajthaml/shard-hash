@@ -31,7 +31,8 @@ lazy val test = Project(
     ),
     libraryDependencies ++= Seq(
       "com.storm-enroute" %% "scalameter" % "0.8-SNAPSHOT",
-      "org.scalatest" %% "scalatest" % "3.0.0" % "test"
+      "org.scalatest" %% "scalatest" % "3.0.0" % "test",
+      "org.reactivemongo" %% "reactivemongo" % "0.11.14"
     ),
     testFrameworks += new TestFramework("org.scalameter.ScalaMeterFramework"),
     parallelExecution in Test := false,

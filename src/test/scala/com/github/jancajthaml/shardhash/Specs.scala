@@ -6,7 +6,7 @@ import reactivemongo.bson.BSONObjectID
 class ShardHashSpecs extends FlatSpec with Matchers {
   
   private def referenceHasher(x: String, m: Int): String =
-    ((BigInt.apply(x, 16) % m).toString)
+    (BigInt.apply(x, 16) % m).toString
 
   "shardHash" should "have same result as BigInt(x) % modulus" in {
     val id: String = "507f1f77bcf86cd799439011"
@@ -16,7 +16,7 @@ class ShardHashSpecs extends FlatSpec with Matchers {
     hash should === (referenceHasher(id, modulus))
   }
 
-  it should "be consistent" in {
+  it should "be consistent in different ids" in {
     val modulus: Int = 300
 
     (0 to 1000).foreach { t => {
@@ -25,13 +25,12 @@ class ShardHashSpecs extends FlatSpec with Matchers {
     } }
   }
 
-  //@info does not work
-  /*
-  it should "work at extemes" in {
+  it should "be consistent in different modulus (1 to 10000)" in {
     val id: String = BSONObjectID.generate().stringify
-    shardHash(id, 1) should === (referenceHasher(id, 1))
-    shardHash(id, Int.MaxValue) should === (referenceHasher(id, Int.MaxValue))
+
+    (1 to 10000).foreach { modulus => {
+      shardHash(id, modulus) should === (referenceHasher(id, modulus))
+    } }
   }
-  */
 
 }
